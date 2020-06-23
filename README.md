@@ -1,9 +1,9 @@
 # ProtoStax_ISS_Tracker
 Demo for ProtoStax ISS Tracker with ePaper Display and Raspberry Pi
 
-![ProtoStax Word Clock](ProtoStax_ISS_Tracker.jpg)
+![ProtoStax ISS Tracker](ProtoStax_ISS_Tracker.jpg)
 
-![ProtoStax Word Clock](ProtoStax_ISS_Tracker.gif)
+![ProtoStax ISS Tracker](ProtoStax_ISS_Tracker.gif)
 
 
 using [ProtoStax for Raspberry Pi B+](https://www.protostax.com/products/protostax-for-raspberry-pi-b)
