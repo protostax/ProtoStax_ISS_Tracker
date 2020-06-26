@@ -10,7 +10,7 @@
 #
 #   ISS Current Location is obtained using Open Notify ISS Current Location API
 #   http://open-notify.org/Open-Notify-API/ISS-Location-Now/
-j# 
+# 
 #   Written by Sridhar Rajagopal for ProtoStax.
 #   BSD license. All text above must be included in any redistribution
 # *
@@ -53,7 +53,7 @@ class Display(object):
 
         imageRed = Image.new('1', (self.imageWidth, self.imageHeight), 255) # 1: clear the frame
         issLogo = Image.open('iss.bmp').convert('L')
-        drawred = ImageDraw.Draw(imageGray)
+        drawred = ImageDraw.Draw(imageRed)
   
         for i,t in enumerate(positions):
             (lat,lon) = t
@@ -68,7 +68,7 @@ class Display(object):
             if (i == len(positions) - 1):
                 s = 10
                 # drawred.rectangle((x-s,y-s,x+s,y+s), fill=0)
-                imageGray.paste(issLogo, ((int)(x-s), (int)(y-s)))
+                imageRed.paste(issLogo, ((int)(x-s), (int)(y-s)))
             elif (((i+1) % 30) == 0): # every 15 minutes (one reading every 30 seconds, so 30 readings)
                 s = 2
                 drawred.rectangle((x-s,y-s,x+s,y+s), fill=0)
