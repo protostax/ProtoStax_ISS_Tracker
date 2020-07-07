@@ -35,7 +35,7 @@ but includes the necessary files from that library directly, so you
 **don't need to install anything extra**!
 
 ```
-git clone https://github.com/protostax/ProtoStax_Word_Clock.git
+git clone https://github.com/protostax/ProtoStax_ISS_Tracker.git
 ```
 
 ## Usage
