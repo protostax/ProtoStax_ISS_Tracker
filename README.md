@@ -6,7 +6,13 @@ Demo for ProtoStax ISS Tracker with ePaper Display and Raspberry Pi
 ![ProtoStax ISS Tracker](ProtoStax_ISS_Tracker.gif)
 
 
-using [ProtoStax for Raspberry Pi B+](https://www.protostax.com/products/protostax-for-raspberry-pi-b)
+using
+[ProtoStax for Raspberry Pi B+](https://www.protostax.com/products/protostax-for-raspberry-pi-b)
+
+For further instructions, see the
+[International Space Station Tracker](https://www.hackster.io/sridhar-rajagopal/international-space-station-tracker-6afdca)
+Tutorial at [Hackster.io](https://www.hackster.io/sridhar-rajagopal/international-space-station-tracker-6afdca)
+
 
 ## Prerequisites
 
