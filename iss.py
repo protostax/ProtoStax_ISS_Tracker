@@ -29,7 +29,7 @@ import epdconfig
 
 from PIL import Image,  ImageDraw,  ImageFont, ImageOps
 from datetime import datetime
-from time import sleep
+from time import time, sleep
 
 import requests 
 
@@ -103,6 +103,7 @@ def main():
     positions = []
 
     while(True):
+        t0 = time()
         epd.init()
 
         r = requests.get(url = URL)
@@ -125,7 +126,9 @@ def main():
         sleep(2)
         epd.sleep()
        
-        sleep(INTERVAL) # sleep for 30 seconds 
+        t1 = time()
+        sleepTime = max(INTERVAL - (t1 - t0), 0)
+        sleep(sleepTime) # sleep for 30 seconds minus duration of get request and display refresh
 
 
 # gracefully exit without a big exception message if possible
