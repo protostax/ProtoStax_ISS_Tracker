@@ -1,4 +1,4 @@
-# *************************************************** 
+# ***************************************************
 #   International Space Station Tracker.
 #   using Raspberry Pi B+, Waveshare ePaper Display and ProtoStax enclosure
 #   --> https://www.waveshare.com/product/modules/oleds-lcds/e-paper/2.7inch-e-paper-hat-b.htm
@@ -10,7 +10,7 @@
 #
 #   ISS Current Location is obtained using Open Notify ISS Current Location API
 #   http://open-notify.org/Open-Notify-API/ISS-Location-Now/
-# 
+#
 #   Written by Sridhar Rajagopal for ProtoStax.
 #   BSD license. All text above must be included in any redistribution
 # *
@@ -31,7 +31,7 @@ from PIL import Image,  ImageDraw,  ImageFont, ImageOps
 from datetime import datetime
 from time import sleep
 
-import requests 
+import requests
 
 # Update Interval
 INTERVAL = 30 #seconds
@@ -54,7 +54,7 @@ class Display(object):
         imageRed = Image.new('1', (self.imageWidth, self.imageHeight), 255) # 1: clear the frame
         issLogo = Image.open('iss.bmp').convert('L')
         drawred = ImageDraw.Draw(imageRed)
-  
+
         for i,t in enumerate(positions):
             (lat,lon) = t
 
@@ -64,7 +64,7 @@ class Display(object):
             # last position in the positions array is the latest location
             # Every 15 minutes, we add a rectangular marker
             # and a small red circle to mark other locations
-        
+
             if (i == len(positions) - 1):
                 s = 10
                 # drawred.rectangle((x-s,y-s,x+s,y+s), fill=0)
@@ -77,6 +77,10 @@ class Display(object):
                 drawred.ellipse((x-s,y-s,x+s,y+s), outline=0)
                 # drawred.point((x,y), fill=0)
 
+    # Rotate image 180
+    #  imageRed = imageRed.transpose(Image.ROTATE_180)
+    #  imageBlack = imageBlack.transpose(Image.ROTATE_180)
+
         # return the rendered Red and Black images
         return imageBlack, imageRed
 
@@ -87,9 +91,9 @@ class Display(object):
     def mapLatLongToXY(self, lat, lon):
         x = (int)(0.733 * lon + 132)
         y = (int)(-1.006 * lat + 90.5)
-        return x, y 
+        return x, y
 
-# The main function    
+# The main function
 def main():
     # API to get ISS Current Location
     URL = 'http://api.open-notify.org/iss-now.json'
@@ -107,13 +111,13 @@ def main():
 
         r = requests.get(url = URL)
 
-        # extracting data in json format 
-        data = r.json() 
+        # extracting data in json format
+        data = r.json()
         print(data)
-        
+
         lat = float(data['iss_position']['latitude'])
         lon = float(data['iss_position']['longitude'])
-        
+
         positions.append((lat, lon))
         print(positions)
 
@@ -124,8 +128,8 @@ def main():
         epd.display(epd.getbuffer(imageBlack), epd.getbuffer(imageRed))
         sleep(2)
         epd.sleep()
-       
-        sleep(INTERVAL) # sleep for 30 seconds 
+
+        sleep(INTERVAL) # sleep for 30 seconds
 
 
 # gracefully exit without a big exception message if possible
@@ -137,10 +141,10 @@ def ctrl_c_handler(signal, frame):
     # instead putting it to sleep when done displaying, or cutting off power to it altogether.
     #
     # epdconfig.module_exit() shuts off power to the module and calls GPIO.cleanup()
-    # The latest epd library chooses to shut off power (call module_exit) even when calling epd.sleep()    
+    # The latest epd library chooses to shut off power (call module_exit) even when calling epd.sleep()
     # epd.sleep() calls epdconfig.module_exit(), which in turns calls cleanup().
     # We can therefore end up in a situation calling GPIO.cleanup twice
-    # 
+    #
     # Need to cleanup Waveshare epd code to call GPIO.cleanup() only once
     # for now, calling epdconfig.module_init() to set up GPIO before calling module_exit to make sure
     # power to the ePaper display is cut off on exit
