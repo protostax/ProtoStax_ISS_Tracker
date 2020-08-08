@@ -77,9 +77,9 @@ class Display(object):
                 drawred.ellipse((x-s,y-s,x+s,y+s), outline=0)
                 # drawred.point((x,y), fill=0)
 
-    # Rotate image 180
-    #  imageRed = imageRed.transpose(Image.ROTATE_180)
-    #  imageBlack = imageBlack.transpose(Image.ROTATE_180)
+        # Rotate image 180 degrees - Remove the # comments of the lines below to rotate the image and allow for alternate positioning/mounting of the Raspberry Pi 
+        # imageRed = imageRed.transpose(Image.ROTATE_180)
+        # imageBlack = imageBlack.transpose(Image.ROTATE_180)
 
         # return the rendered Red and Black images
         return imageBlack, imageRed
