@@ -69,7 +69,7 @@ class Display(object):
                 s = 10
                 # drawred.rectangle((x-s,y-s,x+s,y+s), fill=0)
                 imageRed.paste(issLogo, ((int)(x-s), (int)(y-s)))
-            elif (((i+1) % 30) == 0): # every 15 minutes (one reading every 30 seconds, so 30 readings)
+            elif (((i+1) % (15 * 60 / INTERVAL)) == 0): # every 15 minutes (so 15 * 60s / DATA_INTERVAL = number of readings within 15 minutes)
                 s = 2
                 drawred.rectangle((x-s,y-s,x+s,y+s), fill=0)
             else:
