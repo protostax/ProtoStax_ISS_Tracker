@@ -33,8 +33,10 @@ from time import time, sleep
 
 import requests 
 
-# Update Interval
-INTERVAL = 30 #seconds
+# Update Interval for fetching positions
+DATA_INTERVAL = 30 #seconds
+# Update interval for the display
+DISPLAY_REFRESH_INTERVAL = 2 # Number of DATA_INTERVAL between successive display updates (e.g. 2 => update display every second deta fetch)
 
 # Note:
 # The dimensions of the 2.7 in ePaper display are
@@ -69,7 +71,7 @@ class Display(object):
                 s = 10
                 # drawred.rectangle((x-s,y-s,x+s,y+s), fill=0)
                 imageRed.paste(issLogo, ((int)(x-s), (int)(y-s)))
-            elif (((i+1) % (15 * 60 / INTERVAL)) == 0): # every 15 minutes (so 15 * 60s / DATA_INTERVAL = number of readings within 15 minutes)
+            elif (((i+1) % (15 * 60 / DATA_INTERVAL)) == 0): # every 15 minutes (so 15 * 60s / DATA_INTERVAL = number of readings within 15 minutes)
                 s = 2
                 drawred.rectangle((x-s,y-s,x+s,y+s), fill=0)
             else:
@@ -104,7 +106,6 @@ def main():
 
     while(True):
         t0 = time()
-        epd.init()
 
         r = requests.get(url = URL)
 
@@ -118,16 +119,18 @@ def main():
         positions.append((lat, lon))
         print(positions)
 
-        (imageBlack, imageRed) = display.drawISS(positions)
-
-        # We're drawing the map in black and the ISS location and trajectory in red
-        # Swap it around if you'd like the inverse color scheme
-        epd.display(epd.getbuffer(imageBlack), epd.getbuffer(imageRed))
-        sleep(2)
-        epd.sleep()
+        # Refresh the display on the first fetch and then on every DISPLAY_REFRESH_INTERVAL fetch
+        if (DISPLAY_REFRESH_INTERVAL == 1 or len(positions) % DISPLAY_REFRESH_INTERVAL == 1):
+            epd.init()
+            (imageBlack, imageRed) = display.drawISS(positions)
+            # We're drawing the map in black and the ISS location and trajectory in red
+            # Swap it around if you'd like the inverse color scheme
+            epd.display(epd.getbuffer(imageBlack), epd.getbuffer(imageRed))
+            sleep(2)
+            epd.sleep()
        
         t1 = time()
-        sleepTime = max(INTERVAL - (t1 - t0), 0)
+        sleepTime = max(DATA_INTERVAL - (t1 - t0), 0)
         sleep(sleepTime) # sleep for 30 seconds minus duration of get request and display refresh
 
 
