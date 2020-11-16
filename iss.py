@@ -12,8 +12,13 @@
 #   http://open-notify.org/Open-Notify-API/ISS-Location-Now/
 #
 #   Written by Sridhar Rajagopal for ProtoStax.
+#
+#   Contributions by:
+#   jplegat
+#   MatKier
+#   MiketheChap/melcasipit-Mike Davis paid coder melcasipit on Fiverr to write ring/circular buffer+exception handling
+#
 #   BSD license. All text above must be included in any redistribution
-# *
 
 
 import sys
@@ -37,6 +42,16 @@ import requests
 DATA_INTERVAL = 30 #seconds
 # Update interval for the display
 DISPLAY_REFRESH_INTERVAL = 2 # Number of DATA_INTERVAL between successive display updates (e.g. 2 => update display every second deta fetch)
+
+# Limit the number of data entries
+# Entries older than this will be aged out - ie. circular buffer
+# Since we update the position every 30 seconds (DATA_INTERVAL),
+# that would be 24*60*2 = 2880 data points. The ISS does about
+# 16 orbits per day. Setting the DATA_LIMIT to 1440 would give us about
+# 8 orbits worth of data
+# You can adjust this down to the period of interest for you with the
+# above math
+DATA_LIMIT = 1440 # positions limit
 
 # Note:
 # The dimensions of the 2.7 in ePaper display are
@@ -110,16 +125,20 @@ def main():
 
     while(True):
         t0 = time()
+        try:
+            r = requests.get(url = URL)
 
-        r = requests.get(url = URL)
-
-        # extracting data in json format
-        data = r.json()
-        print(data)
+            # extracting data in json format
+            data = r.json()
+            print(data)
+        except:
+            print("error getting data.... might be a temporary hiccup so continuing")
+            continue
 
         lat = float(data['iss_position']['latitude'])
         lon = float(data['iss_position']['longitude'])
-
+        if len(positions) > (DATA_LIMIT - 1):
+            del positions[0]
         positions.append((lat, lon))
         print(positions)
 
