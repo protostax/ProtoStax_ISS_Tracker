@@ -161,24 +161,21 @@ def main():
 # gracefully exit without a big exception message if possible
 def ctrl_c_handler(signal, frame):
     print('Goodbye!')
-    # XXX : TODO
-    #
     # To preserve the life of the ePaper display, it is best not to keep it powered up -
-    # instead putting it to sleep when done displaying, or cutting off power to it altogether.
-    #
-    # epdconfig.module_exit() shuts off power to the module and calls GPIO.cleanup()
-    # The latest epd library chooses to shut off power (call module_exit) even when calling epd.sleep()
-    # epd.sleep() calls epdconfig.module_exit(), which in turns calls cleanup().
-    # We can therefore end up in a situation calling GPIO.cleanup twice
-    #
-    # Need to cleanup Waveshare epd code to call GPIO.cleanup() only once
-    # for now, calling epdconfig.module_init() to set up GPIO before calling module_exit to make sure
-    # power to the ePaper display is cut off on exit
-    # I have also modified epdconfig.py to initialize SPI handle in module_init() (vs. at the global scope)
-    # because slepe/module_exit closes the SPI handle, which wasn't getting initialized in module_init
-    epdconfig.module_init()
-    epdconfig.module_exit()
-    print("Remeber to clear the display using cleardisplay.py if you plan to power down your Pi and store it, to prevent burn-in!")
+    # instead putting it to sleep when done displaying, or cutting off power to it altogether when
+    # quitting. We'll also make sure to clear the screen when exiting. If you are powering down your
+    # Raspberry Pi and storing it and the ePaper display, it is recommended
+    # that the display be cleared prior to storage, to prevent any burn-in.
+    # 
+    # I have modified epdconfig.py to initialize SPI handle in module_init() (vs. at the global scope)
+    # because slepe/module_exit closes the SPI handle, which wasn't getting initialized in module_init.
+    # I've also added a module_sleep (which epd.sleep calls) which does not call GPIO.cleanup, and
+    # made module_exit call both module_sleep and GPIO.cleanup
+    epd = epd2in7b.EPD()
+    print("Clearing screen before exiting ... Please wait!")
+    epd.init()
+    epd.Clear()
+    epd.exit()
     exit(0)
 
 signal.signal(signal.SIGINT, ctrl_c_handler)

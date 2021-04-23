@@ -263,6 +263,15 @@ class EPD:
         self.send_command(0X07)
         self.send_data(0xA5)
         
-        epdconfig.module_exit()
+        epdconfig.module_sleep()
+
+    def exit(self):
+        self.send_command(0X50)
+        self.send_data(0xf7)
+        self.send_command(0X02)
+        self.send_command(0X07)
+        self.send_data(0xA5)
+        
+        epdconfig.module_exit()        
 ### END OF FILE ###
 

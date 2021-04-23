@@ -65,25 +65,11 @@ since the start.
 
 As an alternative, the Python script can be started during boot by creating a service - more info at https://www.raspberrypi.org/documentation/linux/usage/systemd.md
 
-1. Create a new file called isstracker.service and copy the contents below to the new file - adjust the **WorkingDirectory** path accordingly:
+1. Edit isstracker.service - adjust the **WorkingDirectory** path
+according to where you've installed it:
 
 ```
-[Unit]
-Description=ISS Tracker
-After=network-online.target
-Wants=network-online.target
-
-[Service]
-ExecStart=/usr/bin/python3 iss.py
 WorkingDirectory=/home/pi/ProtoStax_ISS_Tracker
-StandardOutput=inherit
-StandardError=inherit
-Restart=always
-User=pi
-
-[Install]
-WantedBy=multi-user.target
-
 ```
 
 2. Copy the isstracker.service file into /etc/systemd/system as root:

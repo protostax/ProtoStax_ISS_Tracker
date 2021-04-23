@@ -65,7 +65,7 @@ def module_init():
     SPI.mode = 0b00
     return 0
 
-def module_exit():
+def module_sleep():
     global SPI
     if SPI is not None:
         print("spi end")
@@ -74,6 +74,8 @@ def module_exit():
     print("close 5V, Module enters 0 power consumption ...")
     GPIO.output(RST_PIN, 0)
     GPIO.output(DC_PIN, 0)
-    
+   
+def module_exit():
+    module_sleep() 
     GPIO.cleanup()
 ### END OF FILE ###

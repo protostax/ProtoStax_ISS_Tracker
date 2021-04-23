@@ -1,0 +1,16 @@
+[Unit]
+Description=ISS Tracker
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStart=/usr/bin/python3 iss.py
+KillSignal=SIGINT
+WorkingDirectory=/home/pi/ProtoStax_ISS_Tracker
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=pi
+
+[Install]
+WantedBy=multi-user.target
