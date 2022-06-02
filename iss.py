@@ -141,9 +141,10 @@ def main():
             del positions[0]
         positions.append((lat, lon))
         print(positions)
+        print(len(positions))
 
         # Refresh the display on the first fetch and then on every DISPLAY_REFRESH_INTERVAL fetch
-        if ((len(positions) >= 1) and ((len(positions)-1) % DISPLAY_REFRESH_INTERVAL)):
+        if ((len(positions) >= 1) and (((len(positions)-1) % DISPLAY_REFRESH_INTERVAL) == 0)):
             epd.init()
             (imageBlack, imageRed) = display.drawISS(positions)
             # We're drawing the map in black and the ISS location and trajectory in red
