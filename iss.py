@@ -41,7 +41,8 @@ import requests
 # Update Interval for fetching positions
 DATA_INTERVAL = 30 #seconds
 # Update interval for the display
-DISPLAY_REFRESH_INTERVAL = 2 # Number of DATA_INTERVAL between successive display updates (e.g. 2 => update display every second deta fetch)
+# =20 means update every 10 minutes
+DISPLAY_REFRESH_INTERVAL = 20 # Number of DATA_INTERVAL between successive display updates (e.g. 2 => update display every second deta fetch)
 
 # Limit the number of data entries
 # Entries older than this will be aged out - ie. circular buffer
@@ -63,7 +64,7 @@ class Display(object):
         self.imageHeight = imageHeight
 
     # Draws the ISS current location and trajectory from array of positions
-    def drawISS(self, positions):
+    def drawISS(self, positions, date_time):
         imageBlack = Image.new('1', (self.imageWidth, self.imageHeight), 255) # 1: clear the frame
         imageMap = Image.open('world_map_m.bmp').convert('L')
         imageBlack.paste(imageMap, (0,0))
@@ -71,6 +72,7 @@ class Display(object):
         imageRed = Image.new('1', (self.imageWidth, self.imageHeight), 255) # 1: clear the frame
         issLogo = Image.open('iss.bmp').convert('L')
         drawred = ImageDraw.Draw(imageRed)
+        font16 = ImageFont.truetype('fonts/arial.ttf', 16)
 
         for i,t in enumerate(positions):
             (lat,lon) = t
@@ -97,6 +99,9 @@ class Display(object):
         # Rotate image 180 degrees - Remove the # comments of the lines below to rotate the image and allow for alternate positioning/mounting of the Raspberry Pi 
         # imageRed = imageRed.transpose(Image.ROTATE_180)
         # imageBlack = imageBlack.transpose(Image.ROTATE_180)
+        
+        w1, h1 = font16.getsize(date_time) 
+        drawred.text(((264-w1)/2,176-h1), date_time, font = font16, fill = 0)
 
         # return the rendered Red and Black images
         return imageBlack, imageRed
@@ -122,6 +127,7 @@ def main():
 
     # Store positions in list
     positions = []
+    DISPLAY_REFRESH_INTERVAL_COUNTER = 1    
 
     while(True):
         t0 = time()
@@ -144,14 +150,23 @@ def main():
         print(len(positions))
 
         # Refresh the display on the first fetch and then on every DISPLAY_REFRESH_INTERVAL fetch
-        if ((len(positions) >= 1) and (((len(positions)-1) % DISPLAY_REFRESH_INTERVAL) == 0)):
+        if ((len(positions) == 1) or DISPLAY_REFRESH_INTERVAL_COUNTER == DISPLAY_REFRESH_INTERVAL):
             epd.init()
-            (imageBlack, imageRed) = display.drawISS(positions)
+            now = datetime.now() # current date and time
+            date_time = now.strftime("%m/%d/%Y, %H:%M:%S")
+            (imageBlack, imageRed) = display.drawISS(positions, date_time)
             # We're drawing the map in black and the ISS location and trajectory in red
             # Swap it around if you'd like the inverse color scheme
             epd.display(epd.getbuffer(imageBlack), epd.getbuffer(imageRed))
             sleep(2)
             epd.sleep()
+            if (len(positions) > 1):
+                # Resets the counter for the next round
+                DISPLAY_REFRESH_INTERVAL_COUNTER = 1
+            else:
+                DISPLAY_REFRESH_INTERVAL_COUNTER += 1
+        else:
+            DISPLAY_REFRESH_INTERVAL_COUNTER += 1            
        
         t1 = time()
         sleepTime = max(DATA_INTERVAL - (t1 - t0), 0)
